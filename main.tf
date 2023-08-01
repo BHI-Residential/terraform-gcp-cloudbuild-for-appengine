@@ -22,7 +22,7 @@ resource "google_cloudbuild_trigger" "trigger" {
       invert_regex = false
     }
   }
-
+  
 
 
   dynamic "build" {
@@ -30,14 +30,8 @@ resource "google_cloudbuild_trigger" "trigger" {
     content {
       timeout = var.build_timeout
       options {
-        logging      = "STACKDRIVER_ONLY"
+        logging = "STACKDRIVER_ONLY"
         machine_type = var.machine_type
-      }
-
-      step {
-        name       = local.notify_started_deploy_slack.name
-        entrypoint = local.notify_started_deploy_slack.entrypoint
-        args       = local.notify_started_deploy_slack.args
       }
 
       step {
@@ -60,11 +54,7 @@ resource "google_cloudbuild_trigger" "trigger" {
         }
       }
 
-      step {
-        name       = local.notify_completed_deploy_slack.name
-        entrypoint = local.notify_completed_deploy_slack.entrypoint
-        args       = local.notify_completed_deploy_slack.args
-      }
+
 
     }
   }
