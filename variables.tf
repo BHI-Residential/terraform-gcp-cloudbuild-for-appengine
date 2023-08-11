@@ -30,7 +30,7 @@ locals {
     entrypoint = "bash"
     args = [
       "-c",
-      "curl -s https://raw.githubusercontent.com/GlueOps/gcp-cloudbuild-substitution-variables/v0.1.0/gcsvh.sh | bash"
+      "curl -s https://github.com/BHI-Residential/gcp-cloudbuild-substitution-variables/v1.0.0/gcsvh.sh | bash"
     ]
     env = [for k, v in local.all_vars : "${trim(k, "_")}=$${_${k}}"]
   }]
@@ -40,7 +40,7 @@ locals {
     entrypoint = "bash"
     args = [
       "-c",
-      "curl -s https://raw.githubusercontent.com/GlueOps/gcp-app-engine-flexible-configure-vpc/v0.1.0/gaefcv.sh | bash -s ${var.appengine_vpc_access} ${var.workspace}-vpc ${var.workspace}-${var.appengine_region}-private-subnet"
+      "curl -s https://github.com/BHI-Residential/gcp-cloudbuild-substitution-variables/v1.0.0/gaefcv.sh | bash -s ${var.appengine_vpc_access} ${var.workspace}-vpc ${var.workspace}-${var.appengine_region}-private-subnet"
     ]
   }
 
