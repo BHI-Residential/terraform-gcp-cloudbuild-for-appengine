@@ -79,4 +79,46 @@ resource "google_cloudbuild_trigger" "trigger" {
 
 }
 
+/*Trigger for repo level invocation*/
+resource "google_cloudbuild_trigger" "manual-trigger" {
+  name        = "test-trigger"
 
+  github {
+    name  = var.github_repository_name # Note: REPO must be connected first! Go to triggers -> Manage Repositories -> Ensure Global Region is Selected and then click on Connect Repository. DO NOT create a sample trigger!
+    owner = var.github_org_name
+
+    push {
+      branch       = var.github_vcs_branch_regex
+      invert_regex = false
+    }
+  }
+  source_to_build {
+    uri       = "https://github.com/BHI-Residential/budapest.git"
+    ref       = "refs/heads/dev"
+    repo_type = "GITHUB"
+  }
+
+  git_file_source {
+    path      = "cloudbuild_dev.yaml"
+    uri       = "https://github.com/BHI-Residential/budapest.git"
+    revision  = "refs/heads/dev"
+    repo_type = "GITHUB"
+  }
+
+  substitutions = {
+
+_APP_ENV="dev"
+
+_MIGRATION_ENABLED=true
+
+_SENTRAL_OS_DATABASE_URL="postgres://sentralos_flyway:p6xA7h7bgOAQMIolSuy0rIGy@sentralos-v3-db.internal.dev.sentral.com:5432/sentralos?search_path=sentralos"
+
+  }
+  // If this is set on a build, it will become pending when it is run, 
+  // and will need to be explicitly approved to start.
+  approval_config {
+     approval_required = true 
+  }
+   
+  
+}
