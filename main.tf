@@ -105,15 +105,7 @@ resource "google_cloudbuild_trigger" "manual-trigger" {
     repo_type = "GITHUB"
   }
 
-  substitutions = {
 
-_APP_ENV="dev"
-
-_MIGRATION_ENABLED=true
-
-_SENTRAL_OS_DATABASE_URL="postgres://sentralos_flyway:p6xA7h7bgOAQMIolSuy0rIGy@sentralos-v3-db.internal.dev.sentral.com:5432/sentralos?search_path=sentralos"
-
-  }
   // If this is set on a build, it will become pending when it is run, 
   // and will need to be explicitly approved to start.
   approval_config {
