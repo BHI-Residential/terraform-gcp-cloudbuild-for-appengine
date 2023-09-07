@@ -32,6 +32,7 @@ variable "machine_type" { default = "" }
 
 variable "appengine_region" {}
 variable "appengine_service_name" {}
+variable "appengine_vpc_access" {}
 
 variable "envs_requiring_build_approval" {
   type = list(any)
