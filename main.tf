@@ -7,7 +7,7 @@ data "google_projects" "env_project" {
 }
 
 /*Trigger for repo level invocation*/
-resource "google_cloudbuild_trigger" "manual-trigger" {
+resource "google_cloudbuild_trigger" "trigger" {
  project         = local.project_name
  service_account = "projects/${local.project_name}/serviceAccounts/${local.project_name}@appspot.gserviceaccount.com"
 
