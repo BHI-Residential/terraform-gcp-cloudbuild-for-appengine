@@ -23,14 +23,14 @@ resource "google_cloudbuild_trigger" "trigger" {
     }
   }
   source_to_build {
-    uri       = "https://github.com/BHI-Residential/budapest.git"
+    uri       = var.uri
     ref       = var.github_vcs_branch_regex
     repo_type = "GITHUB"
   }
 
   git_file_source {
     path      = var.trigger_yaml_name
-    uri       = "https://github.com/BHI-Residential/budapest.git"
+    uri       = var.uri
     revision  = var.github_vcs_branch_regex
     repo_type = "GITHUB"
   }
