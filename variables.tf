@@ -1,4 +1,5 @@
 variable "workspace" {}
+variable "uri"{}
 variable "alert_cpu_usage_threshold" {
   default     = 0.9 #percentage
   description = "The threshold for the CPU usage alert as a Percentage between 0 and 1. Example: 0.6"
