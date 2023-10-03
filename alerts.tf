@@ -189,8 +189,7 @@ resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
       threshold_value         = var.alert_app_infra_threshold
       comparison              = local.threshold_comparison.greater_than
       duration                = "60s"
-      filter = "resource.type = \"gae_app\" AND resource.labels.module_id = \"${var.appengine_service_name}\" AND severity= \"ERROR\" AND httpRequest.requestUrl=\"/readiness_check\" AND httpRequest.requestUrl=\"/liveness_check\" AND (textPayload=~\"Health checks: instance=[^ =\\t\\n\\r\\f\\\"\\(\\)\\[\\]\\|']+ start=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\\d{2}):?(?:\\d{2})?|Z)?) end=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\\d{2}):?(?:\\d{2})?|Z)?) total=((?:\\d[,.]?)\\d) unhealthy=((?:\\d[,.]?)\\d) healthy=((?:\\d[,.]?)*\\d)\""
-
+      filter = "resource.type = \"gae_app\" AND resource.labels.module_id = \"${var.appengine_service_name}\" AND severity = \"ERROR\" AND -(httpRequest.requestUrl=\"/readiness_check\") AND -(httpRequest.requestUrl=\"/liveness_check\") AND -(textPayload=~\"Health checks: instance=[^ =\\t\\n\\r\\f\\\"\\(\\)\\[\\]\\|']+ start=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\d{2}):?(?:\d{2})?|Z)?)) end=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\d{2}):?(?:\d{2})?|Z)?)) total=((?:\\d[,.]?)*\\d) unhealthy=((?:\\d[,.]?)*\\d) healthy=((?:\\d[,.]?)*\\d)\""
     }
   }
 }
