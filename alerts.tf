@@ -187,7 +187,8 @@ resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
     condition_threshold {
       threshold_value = 1
       comparison      = "COMPARISON_GT" 
-      filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND metric.severity=\"ERROR\" AND NOT metric.httpRequest.requestUrl=\"/readiness_check\" AND NOT metric.httpRequest.requestUrl=\"/liveness_check\" AND metric.logName=\"projects/${local.project_name}/logs/appengine.googleapis.com%2Fstderr\""
+      filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\" AND NOT httpRequest.requestUrl=\"/readiness_check\" AND NOT httpRequest.requestUrl=\"/liveness_check\" AND logName=\"projects/${local.project_name}/logs/appengine.googleapis.com%2Fstderr\""
+
       aggregations {
         alignment_period     = "60s"  # Adjust the alignment period as needed
         per_series_aligner   = "ALIGN_RATE"
