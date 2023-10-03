@@ -166,3 +166,28 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
     }
   }
 }
+
+resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
+  project               = local.project_name
+  display_name          = "${local.project_name}-${var.appengine_service_name}-gae-log-error-alert"
+  combiner              = "OR"
+  enabled               = true
+  notification_channels = local.notification_channels
+  user_labels = {
+    service = var.appengine_service_name
+  }
+
+  documentation {
+    content   = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
+    mime_type = "text/markdown"
+  }
+
+
+  conditions {
+    display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
+    condition_threshold {
+      filter = "resource.type = \"gae_app\" AND resource.labels.module_id = \"${var.appengine_service_name}\" AND severity= \"ERROR\" AND -httpRequest.requestUrl=\"/readiness_check\" AND -httpRequest.requestUrl=\"/liveness_check\" AND -(textPayload=~\"Health checks: instance=[^ =\\t\\n\\r\\f\\\"\\(\\)\\[\\]\\|']+ start=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\\d{2}):?(?:\\d{2})?|Z)?) end=(\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))T((\\d{2}):(\\d{2})(?::(\\d{2}(?:\\.\\d*)?))?(?:([+-](?:\\d{2}):?(?:\\d{2})?|Z)?) total=((?:\\d[,.]?)\\d) unhealthy=((?:\\d[,.]?)\\d) healthy=((?:\\d[,.]?)*\\d)\""
+    }
+  }
+
+}
