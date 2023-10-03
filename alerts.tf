@@ -167,9 +167,10 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
   }
 }
 
+
 resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
   project               = local.project_name
-  display_name          = "${local.project_name}-${var.appengine_service_name}-gae-log-error-alert"
+  display_name          = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
   combiner              = "OR"
   enabled               = true
   notification_channels = local.notification_channels
@@ -181,15 +182,8 @@ resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
     content   = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
     mime_type = "text/markdown"
   }
-
-
   conditions {
     display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
-    condition_threshold {
-      threshold_value         = var.alert_app_infra_threshold
-      comparison              = local.threshold_comparison.greater_than
-      duration                = "60s"
-      filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\" AND NOT httpRequest.requestUrl=\"/readiness_check\" AND NOT httpRequest.requestUrl=\"/liveness_check\" AND textPayload=~\"Health checks: instance\""
-    }
+    filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\" AND NOT httpRequest.requestUrl=\"/readiness_check\" AND NOT httpRequest.requestUrl=\"/liveness_check\" AND textPayload=~\"Health checks: instance\" AND logName=\"projects/${local.project_name}/logs/appengine.googleapis.com%2Fstderr\""
   }
 }
