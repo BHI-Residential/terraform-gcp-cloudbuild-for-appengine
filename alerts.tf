@@ -167,7 +167,6 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
   }
 }
 
-
 resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
   project               = local.project_name
   display_name          = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
@@ -184,6 +183,24 @@ resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
   }
   conditions {
     display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
-    filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\" AND NOT httpRequest.requestUrl=\"/readiness_check\" AND NOT httpRequest.requestUrl=\"/liveness_check\" AND textPayload=~\"Health checks: instance\" AND logName=\"projects/${local.project_name}/logs/appengine.googleapis.com%2Fstderr\""
+
+    display_name = "Error Found"
+
+    condition_threshold {
+      threshold_value = 1
+      filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\" AND NOT httpRequest.requestUrl=\"/readiness_check\" AND NOT httpRequest.requestUrl=\"/liveness_check\" AND textPayload=~\"Health checks: instance\" AND logName=\"projects/${local.project_name}/logs/appengine.googleapis.com%2Fstderr\""
+
+      aggregations {
+        alignment_period     = "60s"  # Adjust the alignment period as needed
+        per_series_aligner   = "ALIGN_RATE"
+        cross_series_reducer = "REDUCE_SUM"
+      }
+
+      duration = "0s"  # No delay for triggering an alert
+
+      trigger {
+        count = 1
+      }
+    }
   }
 }
