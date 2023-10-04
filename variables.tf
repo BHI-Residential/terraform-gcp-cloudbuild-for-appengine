@@ -9,11 +9,6 @@ variable "alert_response_latency_threshold" {
   description = "The threshold for high latency as a number of milliseconds. Example: 10000"
 }
 
-variable "alert_app_infra_threshold" {
-  default     = 1
-  description = "The threshold for app/infra errors. Example: 1"
-}
-
 variable "alert_5xx_threshold" {
   default     = 5
   description = "value of 5xx errors to trigger alert. Example: 5"
