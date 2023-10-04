@@ -171,14 +171,10 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
 
 
 
-
-
-
-
 resource "google_logging_metric" "gae_error_log_metric" {
 project = local.project_name
 name = "gae_error_log_metric"
-filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity>=\"DEBUG\""
+filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity>=\"ERROR\""
 metric_descriptor {
     metric_kind = "DELTA"
     value_type  = "INT64"
