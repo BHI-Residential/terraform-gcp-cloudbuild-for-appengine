@@ -178,7 +178,7 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
 resource "google_logging_metric" "gae_error_log_metric" {
 project = local.project_name
 name = "gae_error_log_metric"
-filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity>=\"ERROR\""
+filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity>=\"DEBUG\""
 metric_descriptor {
     metric_kind = "DELTA"
     value_type  = "INT64"
@@ -214,8 +214,7 @@ condition_threshold {
     cross_series_reducer = "REDUCE_SUM"
   }
 
-  filter = "metric.type=\"logging.googleapis.com/user/gae_error_log\" AND resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND metric.label.metric_name=\"gae_error_log_metric\""
-
+filter = "metric.type=\"logging.googleapis.com/user/gae_error_log_metric\" AND resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\""
   trigger {
     count = 1
     percent = 0
