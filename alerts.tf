@@ -175,50 +175,51 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
 
 
 
-
 resource "google_logging_metric" "gae_error_log_metric" {
-	project = local.project_name
-	name = "gae_error_log_metric"
-	filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\""
-	metric_type = "logging.googleapis.com/user/gae_error_log"
+project = local.project_name
+name = "gae_error_log_metric"
+filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity>=\"ERROR\""
+metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+  }
 }
 
-
-
 resource "google_monitoring_alert_policy" "gae_error_log_alert" {
-	project = local.project_name
-	display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
-	combiner = "OR"
-	enabled = true
-	notification_channels = local.notification_channels
-	user_labels = {
-		service = var.appengine_service_name
-	}
-	documentation {
-		content = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
-		mime_type = "text/markdown"
-	}
+project = local.project_name
+display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
+combiner = "OR"
+enabled = true
+notification_channels = local.notification_channels
+user_labels = {
+service = var.appengine_service_name
+}
 
-	conditions {
-	display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
+documentation {
+content = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
+mime_type = "text/markdown"
+}
 
-	condition_threshold {
-  		threshold_value = 1
- 	        comparison = "COMPARISON_GE"
-	        duration = "1m"
+conditions {
+display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
 
-  		aggregations {
-    			per_series_aligner = "ALIGN_MEAN"
-    			alignment_period = "60s"
-    			cross_series_reducer = "REDUCE_SUM"
-  		}
+condition_threshold {
+  threshold_value = 1
+  comparison = "COMPARISON_GE"
+  duration = "1m"
 
-  		metric_filter = "metric.type=\"logging.googleapis.com/user/gae_error_log\" AND resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND metric.label.metric_name=\"gae_error_log_metric\""
+  aggregations {
+    per_series_aligner = "ALIGN_MEAN"
+    alignment_period = "60s"
+    cross_series_reducer = "REDUCE_SUM"
+  }
 
-  			trigger{
-    				count = 1
-    				percent = 0
-  			}
-		}
-	}
+  filter = "metric.type=\"logging.googleapis.com/user/gae_error_log\" AND resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND metric.label.metric_name=\"gae_error_log_metric\""
+
+  trigger {
+    count = 1
+    percent = 0
+  }
+}
+}
 }
