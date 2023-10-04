@@ -206,7 +206,7 @@ display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-erro
 condition_threshold {
   threshold_value = 1
   comparison = "COMPARISON_GE"
-  duration = "1m"
+  duration = "60s"
 
   aggregations {
     per_series_aligner = "ALIGN_MEAN"
