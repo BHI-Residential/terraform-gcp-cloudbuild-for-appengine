@@ -205,7 +205,7 @@ display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-erro
 
 condition_threshold {
   threshold_value = 1
-  comparison = "COMPARISON_GE"
+  comparison = "COMPARISON_GT"
   duration = "60s"
 
   aggregations {
