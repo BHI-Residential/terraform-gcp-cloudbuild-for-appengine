@@ -167,38 +167,58 @@ resource "google_monitoring_alert_policy" "gae-response-code-alert" {
   }
 }
 
-resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
-  project               = local.project_name
-  display_name          = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
-  combiner              = "OR"
-  enabled               = true
-  notification_channels = local.notification_channels
-  user_labels = {
-    service = var.appengine_service_name
-  }
 
-  documentation {
-    content   = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
-    mime_type = "text/markdown"
-  }
-  conditions {
-    display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
 
-    condition_threshold {
-      threshold_value = 1
-      comparison      = "COMPARISON_GT" 
-      filter          = "resource.type = \"gae_app\"  AND resource.labels.module_id = \"${var.appengine_service_name}\" metric.type = \"logging.googleapis.com/log_severity\" AND severity= \"ERROR\""
-      aggregations {
-        alignment_period     = "60s"  
-        per_series_aligner   = "ALIGN_RATE"
-        cross_series_reducer = "REDUCE_SUM"
-      }
 
-      duration = "0s"  # No delay for triggering an alert
 
-      trigger {
-        count = 1
-      }
-    }
-  }
+
+
+
+
+
+resource "google_logging_metric" "gae_error_log_metric" {
+	project = local.project_name
+	name = "gae_error_log_metric"
+	filter = "resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND severity=\"ERROR\""
+	metric_type = "logging.googleapis.com/user/gae_error_log"
+}
+
+
+
+resource "google_monitoring_alert_policy" "gae_error_log_alert" {
+	project = local.project_name
+	display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
+	combiner = "OR"
+	enabled = true
+	notification_channels = local.notification_channels
+	user_labels = {
+		service = var.appengine_service_name
+	}
+	documentation {
+		content = "the ${local.project_name}-${var.appengine_service_name} app has log errors"
+		mime_type = "text/markdown"
+	}
+
+	conditions {
+	display_name = "${local.project_name}-${var.appengine_service_name}-gae-log-errors"
+
+	condition_threshold {
+  		threshold_value = 1
+ 	        comparison = "COMPARISON_GE"
+	        duration = "1m"
+
+  		aggregations {
+    			per_series_aligner = "ALIGN_MEAN"
+    			alignment_period = "60s"
+    			cross_series_reducer = "REDUCE_SUM"
+  		}
+
+  		metric_filter = "metric.type=\"logging.googleapis.com/user/gae_error_log\" AND resource.type=\"gae_app\" AND resource.labels.module_id=\"${var.appengine_service_name}\" AND metric.label.metric_name=\"gae_error_log_metric\""
+
+  			trigger{
+    				count = 1
+    				percent = 0
+  			}
+		}
+	}
 }
