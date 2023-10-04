@@ -187,7 +187,7 @@ resource "google_monitoring_alert_policy" "app-engine-log-error-alerts" {
     condition_threshold {
       threshold_value = 1
       comparison      = "COMPARISON_GT" 
-      filter          = "resource.type = \"gae_app\"  AND resource.labels.module_id = \"${var.appengine_service_name}\" AND severity= \"ERROR\""
+      filter          = "resource.type = \"gae_app\"  AND resource.labels.module_id = \"${var.appengine_service_name}\" metric.type = \"logging.googleapis.com/log_severity\" AND severity= \"ERROR\""
       aggregations {
         alignment_period     = "60s"  
         per_series_aligner   = "ALIGN_RATE"
