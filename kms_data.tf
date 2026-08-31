@@ -1,11 +1,11 @@
 data "google_kms_key_ring" "default" {
   project  = local.project_name
-  name     = var.workspace
+  name     = var.workspace == "uat" ? "my-keyring" : var.workspace
   location = "global"
 }
 
 data "google_kms_crypto_key" "default" {
-  name     = "encrypt_decrypt-${var.workspace}"
+  name     = var.workspace == "uat" ? "my-first-key" : "encrypt_decrypt-${var.workspace}"
   key_ring = data.google_kms_key_ring.default.id
 }
 
