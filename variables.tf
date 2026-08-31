@@ -21,7 +21,6 @@ variable "encrypted_slack_webhook_url" {
 variable "slack_channel_for_deploy_notifications" {
   description = "The slack channel to send deployment notifications to. Example: #deployments"
 }
-variable "gcp_folder_id" {}
 variable "github_org_name" {}
 variable "github_repository_name" {}
 variable "github_vcs_branch_regex" {
