@@ -1,6 +1,5 @@
 variable "workspace" {}
 variable "uri"{}
-variable "gcp_folder_id" {}
 variable "github_org_name" {}
 variable "github_repository_name" {}
 variable "github_vcs_branch_regex" {
